@@ -1,3 +1,4 @@
+import * as sqlite3 from 'sqlite3';
 import {app, BrowserWindow, screen} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -58,7 +59,33 @@ try {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-  app.on('ready', () => setTimeout(createWindow, 400));
+  app.on('ready', () => {
+    sqlite3.verbose(); 
+    const db = new sqlite3.Database('DB/mydb.db');
+    
+    db.serialize(() => {
+        db.run("CREATE TABLE if not exists lorem (info TEXT)");
+    
+        const stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+    
+        for (let i = 0; i < 10; i++) {
+            stmt.run("Ipsum " + i);
+        }
+    
+        stmt.finalize();
+    
+        db.each("SELECT rowid AS id, info FROM lorem", (err: Error | null, row: { id: number, info: string }) => {
+            if (err) {
+                console.error(err.message);
+                return;
+            }
+            console.log(row.id + ": " + row.info);
+        });
+    });
+
+db.close();
+    
+    setTimeout(createWindow, 400)});
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
