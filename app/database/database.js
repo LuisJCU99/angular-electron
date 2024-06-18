@@ -63,4 +63,15 @@ function obtenerTodosLosDatos() {
     });
 }
 exports.obtenerTodosLosDatos = obtenerTodosLosDatos;
+// ipcMain.handle('read-users', (event) => {
+//   return new Promise((resolve, reject) => {
+//     db.all('SELECT * FROM users', [], (err, rows) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve(rows);
+//       }
+//     });
+//   });
+// });
 //# sourceMappingURL=database.js.map

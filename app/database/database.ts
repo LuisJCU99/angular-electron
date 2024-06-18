@@ -1,5 +1,6 @@
 import * as sqlite3 from 'sqlite3';
 import { Lorem } from './../../src/models/lorem';
+import { IpcMain } from 'electron';
 
 export function initializeDatabase() {
   sqlite3.verbose();
@@ -63,3 +64,17 @@ export function obtenerTodosLosDatos(): Promise<any[]> {
     });
   });
 }
+
+
+// ipcMain.handle('read-users', (event) => {
+//   return new Promise((resolve, reject) => {
+//     db.all('SELECT * FROM users', [], (err, rows) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve(rows);
+//       }
+//     });
+//   });
+// });
+

@@ -1,22 +1,32 @@
 import { Injectable } from '@angular/core';
-import { ipcRenderer } from 'electron';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class pruebaService {
-  constructor() { }
+  private api: any;
 
-  // getDatos(): Promise<any[]> {
-  //   return new Promise((resolve, reject) => {
-  //     ipcRenderer.send('get-datos');
-  //     ipcRenderer.once('datos-obtenidos', (event, args) => {
-  //       if (args.success) {
-  //         resolve(args.data);
-  //       } else {
-  //         reject(args.error);
-  //       }
-  //     });
-  //   });
-  // }
+  constructor() {
+    if ((window as any).api) {
+      this.api = (window as any).api;
+    } else {
+      console.error('API is not available');
+    }
+  }
+
+  createUser(user: { name: string; email: string }) {
+    return this.api?.createUser(user);
+  }
+
+  readUsers() {
+    return this.api?.readUsers();
+  }
+
+  updateUser(user: { id: number; name: string; email: string }) {
+    return this.api?.updateUser(user);
+  }
+
+  deleteUser(userId: number) {
+    return this.api?.deleteUser(userId);
+  }
 }

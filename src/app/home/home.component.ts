@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 // import { initializeDatabase, getDatos } from '../../../app/database/database';
-
+// import { UserService } from '../user.service';
+import { pruebaService } from '../services/prueba.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -9,19 +10,16 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private userService: pruebaService) { }
 
   ngOnInit(): void {
     console.log('HomeComponent INIT');
   }
 
-  // getDatos(){
-  //   // getDatos()
-  //   //   .subscribe(arg => {
-  //   //     console.log("Datos:");
-  //   //     console.log(arg);
-  //   //   });
-  //   // ;
-  // }
+  getDatos() {
+    this.userService.readUsers().then((users: any[]) => {
+      console.log(users);
+    });
+  }
 
 }

@@ -1,7 +1,8 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import { initializeDatabase, obtenerTodosLosDatos } from './database/database';
+import * as sqlite3 from 'sqlite3';
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
@@ -20,7 +21,8 @@ function createWindow(): BrowserWindow {
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve),
-      contextIsolation: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, './preload.js'),
     },
   });
 
@@ -91,3 +93,59 @@ try {
   // Catch Error
   // throw e;
 }
+
+// SQLite3 database setup
+const db = new sqlite3.Database('mydb.db');
+
+db.serialize(() => {
+  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT)');
+});
+
+// IPC handlers for CRUD operations
+ipcMain.handle('create-user', (event, user) => {
+  return new Promise((resolve, reject) => {
+    db.run('INSERT INTO users (name, email) VALUES (?, ?)', [user.name, user.email], function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ id: this.lastID });
+      }
+    });
+  });
+});
+
+ipcMain.handle('read-users', (event) => {
+  return new Promise((resolve, reject) => {
+    db.all('SELECT * FROM lorem', [], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+});
+
+ipcMain.handle('update-user', (event, user) => {
+  return new Promise((resolve, reject) => {
+    db.run('UPDATE users SET name = ?, email = ? WHERE id = ?', [user.name, user.email, user.id], function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(user);
+      }
+    });
+  });
+});
+
+ipcMain.handle('delete-user', (event, userId) => {
+  return new Promise((resolve, reject) => {
+    db.run('DELETE FROM users WHERE id = ?', [userId], function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        console.log("borrado")
+      }
+    });
+  });
+});
