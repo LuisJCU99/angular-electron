@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+// import { initializeDatabase, getDatos } from '../../../app/database/database';
 
 @Component({
   selector: 'app-home',
@@ -13,5 +14,14 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     console.log('HomeComponent INIT');
   }
+
+  // getDatos(){
+  //   // getDatos()
+  //   //   .subscribe(arg => {
+  //   //     console.log("Datos:");
+  //   //     console.log(arg);
+  //   //   });
+  //   // ;
+  // }
 
 }
